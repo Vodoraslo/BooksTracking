@@ -1,0 +1,62 @@
+﻿@model IEnumerable<BooksTracking.Models.UserBook>
+
+@{
+    ViewData["Title"] = "My Books";
+}
+
+<div class="text-center">
+    <h1 class="fancy-title">My Bookshelf</h1>
+    <br />
+
+<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
+    @foreach (var userBook in Model)
+    {
+        <div class="col">
+            <div class="card h-100 shadow-lg book-card">
+                @if (!string.IsNullOrEmpty(userBook.Book.CoverImage) && Uri.IsWellFormedUriString(userBook.Book.CoverImage, UriKind.Absolute))
+                {
+                    <img src="@userBook.Book.CoverImage" class="card-img-top book-cover" alt="Cover of @userBook.Book.Title">
+                }
+                else
+                {
+                    <div class="card-img-top d-flex align-items-center justify-content-center bg-secondary text-light" style="height: 150px;">
+                        <span>No Image</span>
+                    </div>
+                }
+
+                <div class="card-body">
+                    <h5 class="card-title">@userBook.Book.Title</h5>
+                    <p class="card-text">
+                        <strong>Author:</strong> @userBook.Book.Author <br />
+                        <strong>Genre:</strong> @userBook.Book.Genre <br />
+                        <strong>Published:</strong> @userBook.Book.PublishedDate.ToShortDateString() <br />
+                        <strong>ISBN:</strong> @userBook.Book.ISBN <br />
+                        <strong>Status:</strong> @userBook.Status
+
+					</p>
+                    <!-- Change Status Form -->
+                    <form asp-action="UpdateBookStatus" method="post" class="d-flex justify-content-center gap-3">
+						<input type="hidden" name="bookId" value="@userBook.BookId" />
+						<button type="submit" name="status" value="Read" class="btn btn-outline-secondary btn-sm">
+							Read
+						</button>
+						<button type="submit" name="status" value="Currently Reading" class="btn btn-outline-secondary btn-sm">
+							Currently Reading
+						</button>
+					</form>
+                </div>
+
+                <div class="card-footer d-flex justify-content-center">
+                    
+
+                    <!-- Remove Button -->
+                    <form asp-action="RemoveFromBookshelf" method="post" class="d-inline" onsubmit="return confirm('Are you sure you want to remove this book from your bookshelf?');">
+                        <input type="hidden" name="id" value="@userBook.BookId" />
+                        <button type="submit" class="btn btn-danger btn-sm">Remove from Bookshelf</button>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    }
+</div>

@@ -1,0 +1,49 @@
+﻿@model BooksTracking.Models.Book
+
+@{
+    ViewData["Title"] = "Book Details";
+}
+
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 100vh;">
+    <div class="card shadow-lg p-4" style="width: 100%; max-width: 600px;">
+        <h1 class="card-title text-center mb-4" style="font-size: 2.5rem;">@Model.Title</h1>
+
+        <div class="card-body">
+            <div class="mb-3">
+                <strong>Author:</strong> @Model.Author
+            </div>
+            <div class="mb-3">
+                <strong>Genre:</strong> @Model.Genre
+            </div>
+            <div class="mb-3">
+                <strong>Published Date:</strong> @Model.PublishedDate.ToShortDateString()
+            </div>
+            <div class="mb-3">
+                <strong>Description:</strong> @Model.Description
+            </div>
+            <div class="mb-3">
+                <strong>ISBN:</strong> @Model.ISBN
+            </div>
+
+            @if (!string.IsNullOrEmpty(Model.CoverImage) && Uri.IsWellFormedUriString(Model.CoverImage, UriKind.Absolute))
+            {
+                <div class="mb-3 text-center">
+                    <img src="@Model.CoverImage" alt="Cover of @Model.Title" style="max-width: 100%; object-fit: contain;" />
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-secondary">
+                    No Cover Image Available
+                </div>
+            }
+
+            
+
+        </div>
+
+        <div class="card-footer text-center">
+            <a href="@Url.Action("Books", "Home")" class="btn btn-primary">Back to Catalog</a>
+        </div>
+    </div>
+</div>

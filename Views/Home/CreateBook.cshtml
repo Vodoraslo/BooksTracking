@@ -1,0 +1,45 @@
+﻿@{
+    ViewData["Title"] = "Create Book";
+}
+
+@model BooksTracking.Models.Book
+
+
+
+<div class="text-center">
+    <h1 class="display-4">Create</h1>
+</div>
+
+<form asp-action="CreateForm" asp-controller="Home" method="post" enctype="multipart/form-data">
+    <div class="mb-3">
+        <label for="Title" class="form-label">Title</label>
+        <input type="text" class="form-control" id="Title" name="Title" required maxlength="200">
+    </div>
+    <div class="mb-3">
+        <label for="Author" class="form-label">Author</label>
+        <input type="text" class="form-control" id="Author" name="Author" required maxlength="100">
+    </div>
+    <div class="mb-3">
+        <label for="Genre" class="form-label">Genre</label>
+        <input type="text" class="form-control" id="Genre" name="Genre" maxlength="100">
+    </div>
+    <div class="mb-3">
+        <label for="ISBN" class="form-label">ISBN</label>
+        <input type="text" class="form-control" id="ISBN" name="ISBN" maxlength="13">
+    </div>
+    <div class="mb-3">
+        <label for="Description" class="form-label">Description</label>
+        <textarea class="form-control" id="Description" name="Description" rows="5" maxlength="1000"></textarea>
+    </div>
+    <div class="mb-3">
+        <label for="PublishedDate" class="form-label">Published Date</label>
+        <input type="date" class="form-control" id="PublishedDate" name="PublishedDate">
+    </div>
+    <div class="mb-3">
+        <label for="CoverImage" class="form-label">Cover Image URL</label>
+        <input type="text" class="form-control" id="CoverImage" name="CoverImage" value="@Model.CoverImage" placeholder="Enter image URL or upload a new image">
+       
+    </div>
+
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
