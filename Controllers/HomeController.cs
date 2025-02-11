@@ -240,7 +240,76 @@ namespace BooksTracking.Controllers
             return View(books.ToList());
         }
 
+        public async Task<IActionResult> EditUser(string id)
+        {
+            if (id == null) return NotFound();
 
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null) return NotFound();
+
+            var model = new EditUserViewModel
+            {
+                Id = user.Id,
+                Email = user.Email,
+                FirstName = user.FirstName,
+                LastName = user.LastName
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditUser(EditUserViewModel model)
+        {
+            if (!ModelState.IsValid) return View(model);
+
+            var user = await _userManager.FindByIdAsync(model.Id);
+            if (user == null) return NotFound();
+
+            user.Email = model.Email;
+            user.FirstName = model.FirstName;
+            user.LastName = model.LastName;
+
+            var result = await _userManager.UpdateAsync(user);
+            if (result.Succeeded)
+                return RedirectToAction("Users");
+
+            foreach (var error in result.Errors)
+                ModelState.AddModelError(string.Empty, error.Description);
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteUser(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            // Проверка дали потребителят е в ролята "Admin"
+            if (await _userManager.IsInRoleAsync(user, "Admin"))
+            {
+                TempData["Error"] = "Admin users cannot be deleted!";
+                return RedirectToAction("Users");
+            }
+
+            var result = await _userManager.DeleteAsync(user);
+            if (result.Succeeded)
+            {
+                TempData["Success"] = "User deleted successfully.";
+            }
+            else
+            {
+                TempData["Error"] = "Error deleting user.";
+            }
+
+            return RedirectToAction("Users");
+        }
 
         // Privacy page
         public IActionResult Privacy()
