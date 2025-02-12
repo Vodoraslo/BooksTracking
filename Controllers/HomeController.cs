@@ -180,6 +180,7 @@ namespace BooksTracking.Controllers
             return RedirectToAction("MyBooks");
         }
 
+        
         // Действие за страница My Books
         public IActionResult MyBooks()
         {
@@ -217,6 +218,37 @@ namespace BooksTracking.Controllers
             // Пренасочваме потребителя обратно към страницата със собствените му книги
             return RedirectToAction("MyBooks");
         }
+        [Route("Home/MyBooks")]
+        public async Task<IActionResult> MyBooks(string searchQuery)
+        {
+            var userId = _userManager.GetUserId(User);
+
+            // Включваме информацията за книгите
+            var userBooksQuery = _context.UserBooks
+                .Include(ub => ub.Book)
+                .Where(ub => ub.UserId == userId);
+
+            // Ако има търсене, филтрираме
+            if (!string.IsNullOrEmpty(searchQuery))
+            {
+                searchQuery = searchQuery.ToLower().Trim();
+
+                userBooksQuery = userBooksQuery.Where(ub =>
+                    ub.Book != null && (
+                        ub.Book.Title.ToLower().Contains(searchQuery) ||
+                        ub.Book.Author.ToLower().Contains(searchQuery) ||
+                        ub.Book.Genre.ToLower().Contains(searchQuery)
+                    ));
+            }
+
+            var userBooks = await userBooksQuery.ToListAsync();
+
+            ViewData["CurrentFilter"] = searchQuery;
+            return View(userBooks);
+        }
+
+
+
 
         [Route("Home/Books/Create")]
         public IActionResult Books(string searchQuery)
